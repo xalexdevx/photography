@@ -10,8 +10,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/jekyll-build-pages@v1
+    - uses: actions/checkout@v3
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
       with:
-        source: ./
-        destination: ./_site
+        ruby-version: '2.7.4'
+        bundler-cache: true
+
+    - name: Install dependencies
+      run: |
+        bundle install
+
+    - name: Build site
+      run: |
+        bundle exec jekyll build
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v2
+      if: github.ref == 'refs/heads/main'
